@@ -14,6 +14,25 @@ KEY = HenonKey(a=1.4, b=0.3, c=0.2, d=0.4, x0=0.3, y0=0.5)
 
 
 class WavWatermarkTests(unittest.TestCase):
+    def test_calibration_recovers_bit_lost_after_frame_reanalysis(self):
+        time = np.arange(FRAME_SIZE) / SAMPLE_RATE
+        pcm = np.rint(32768 * 0.002 * np.sin(2 * np.pi * 880 * time)).astype(np.int16)
+        bits = [0]  # A one-element Henon sequence masks this to bit 1.
+        with TemporaryDirectory() as directory:
+            folder = Path(directory)
+            source = folder / "original.wav"
+            default = folder / "default.wav"
+            wavfile.write(source, SAMPLE_RATE, pcm)
+            embed_wav(source, default, bits, KEY)
+            self.assertEqual(extract_wav(default, 1, KEY).tolist(), [1])
+            for margin in (0.025, 0.2):
+                with self.subTest(margin=margin):
+                    calibrated = folder / f"calibrated_{margin}.wav"
+                    embed_wav(
+                        source, calibrated, bits, KEY, calibrate=True, calibration_margin=margin
+                    )
+                    self.assertEqual(extract_wav(calibrated, 1, KEY).tolist(), bits)
+
     def test_pcm16_blind_roundtrip_and_unmodified_tail(self):
         rng = np.random.default_rng(53)
         bits = rng.integers(0, 2, size=128, dtype=np.uint8)
