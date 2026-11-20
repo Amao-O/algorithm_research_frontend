@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "id": "group_53_a053_audio_watermark",
+  "title": "A053 音频数字水印",
+  "english": "A053 Digital Audio Watermarking",
+  "category": "内容水印",
+  "summary": "在 WAV 中嵌入短文本水印，或从带水印音频中盲提取比特。",
+  "description": "第 53 组独立复现 Yamni 等人在 Scientific Reports (2023) 发表的方法。采用五层 DTCWT、FrCT、能量量化和 modified Henon 掩码，演示使用固定参数及重建后校准。无攻击 PCM16 闭环已在测试样本上验证，MP3 重编码和移位后的误码仍较高。请先在本机启动算法服务。结果可下载一小时，也会随服务重启清除。",
+  "team": "第 53 组",
+  "version": "1.0.0",
+  "runtime": "本地 Python 算法服务 · CPU",
+  "inputs": [
+    { "name": "audio", "label": "44.1 kHz 单声道 PCM16 WAV", "kind": "audio", "accept": ["audio/wav", "audio/x-wav", "audio/wave", "audio/vnd.wave"], "required": true, "max_mb": 6 }
+  ],
+  "parameters": [
+    {
+      "name": "mode", "label": "处理方式", "type": "select", "required": true, "default": "embed",
+      "options": [{ "value": "embed", "label": "嵌入水印" }, { "value": "extract", "label": "盲提取水印" }]
+    },
+    { "name": "watermark", "label": "水印文字（仅嵌入）", "type": "text", "default": "A053", "max_length": 16, "help": "UTF-8 编码。A053 占 32 位，实际位数见嵌入报告。" },
+    { "name": "bit_count", "label": "水印位数（仅提取）", "type": "integer", "default": 32, "min": 1, "max": 5444, "help": "上传带水印 WAV，填写嵌入报告中的位数。" }
+  ],
+  "examples": [
+    {
+      "title": "爵士片段嵌入 A053",
+      "description": "Anticipating Gold 片段。试听原始 WAV 和本算法生成的带水印音频，或上传输出并以 32 位执行盲提取。",
+      "input": { "src": "samples/group_53_a053_audio_watermark/input.wav", "kind": "audio", "label": "原始爵士片段" },
+      "output": { "src": "samples/group_53_a053_audio_watermark/output.wav", "kind": "audio", "label": "嵌入 A053 后的 WAV" },
+      "parameters": { "mode": "embed", "watermark": "A053", "bit_count": 32 }
+    }
+  ],
+  "adapter": { "type": "http", "endpoint": "http://127.0.0.1:8000/process" }
+}

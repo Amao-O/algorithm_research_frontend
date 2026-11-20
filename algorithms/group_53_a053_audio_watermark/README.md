@@ -13,7 +13,7 @@
 | `requirements.txt` | 单核算法的 Python 依赖 |
 | `run_experiments.py` | 批量运行 SNR、BER 与三项鲁棒性对照 |
 | `src/mpi_watermark.py` | MPI 分帧嵌入、盲提取与计时 |
-| `api.py` | 后续提供前端调用的 HTTP 接口 |
+| `api.py` | 接收平台请求，返回生成的 WAV 与 JSON 报告 |
 
 ## 单核模块验证
 
@@ -139,4 +139,4 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 mpirun -np 4 \
 
 ## 平台接入
 
-算法可运行后，将方法配置放入 `public/methods/group_53_a053_audio_watermark.json`，并更新 `public/methods/index.json`。真实输入和输出样例放入 `public/samples/group_53_a053_audio_watermark/`。请求和结果格式见[算法接入规范](../../docs/算法接入规范.md)。
+方法已登记到平台目录。算法服务接收 `POST /process`，配置指向 `http://127.0.0.1:8000/process`。启动命令、素材限制、结果保留时间和样例出处见[根目录 README](../../README.md#本机运行)。请求和结果格式见[算法接入规范](../../docs/算法接入规范.md)。
