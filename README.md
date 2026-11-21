@@ -45,11 +45,11 @@ npm run dev -- --port 5173 --strictPort
 
 - **平台样例**使用 Ignacio Tapia Carmagnani 的 *Anticipating Gold* 录音 0–8 秒。源文件为 MP3，裁剪后转成 44.1 kHz 单声道 PCM16，并对输出嵌入了 32 位 `A053`。实测 32 位全部正确恢复。前 32 个承载帧的 SNR 为 18.88 dB，其余样本逐点一致。[原始 WAV](public/samples/group_53_a053_audio_watermark/input.wav) · [带水印 WAV](public/samples/group_53_a053_audio_watermark/output.wav) · [录音来源](https://freemusicarchive.org/music/ignacio-tapia-carmagnani/summer-is-on-its-way/anticipating-gold/) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **五首音乐替代样本**每首嵌入 5,444 位，0.20 余量校准的无攻击 BER 均为 0%，SNR 范围为 33.41–50.41 dB。128 kbps MP3 重编码和右移 5 点的平均 BER 分别为 47.42% 和 40.10%，论文的鲁棒性结果仍待复现。[逐项实验方法与摘要](algorithms/group_53_a053_audio_watermark/README.md#多曲目对照)
-- **MPI 单次实测**在 4 核 CPU 配额的 Codex 云实例上完成。60 秒爵士样本在 1、2、4 进程下的输出逐字节一致。4 进程的嵌入和提取分别加速 3.45× 和 3.37×。华为云 8、16 进程和重复计时仍待完成。[MPI 环境与计时说明](algorithms/group_53_a053_audio_watermark/README.md#mpi-实验)
+- **华为云 MPI 实测**在 Ubuntu 24.04.4 LTS、4 vCPU 的同一台 ECS 上完成。使用同一段 60 秒爵士样本，1、2、4 进程各测 3 次。9 次均恢复全部 5,444 位，输出 WAV 的 SHA-256 一致。以 1 进程的中位耗时为基线，4 进程嵌入从 54.38 秒降到 14.15 秒（3.84×），提取从 14.27 秒降到 3.79 秒（3.77×）。目前华为云计时覆盖 1、2、4 进程。[完整计时、ETIR 与复现条件](algorithms/group_53_a053_audio_watermark/README.md#华为云-ecs-重复计时)
 
 ## 验证
 
-已在本地 Vite 和 Python 服务上验证样例加载、嵌入、音频下载、盲提取和报告下载。公开 HTTPS 服务仍待部署。
+已在本地 Vite 和 Python 服务上验证样例加载、嵌入、音频下载、盲提取和报告下载。在华为云 ECS 上，也已通过本机 HTTP 接口完成样例上传、嵌入、下载 WAV 和盲提取，恢复全部 32 位并得到文本 `A053`。当前接口供同一台机器访问，也可通过 SSH 端口转发进行验证。
 
 ```bash
 # 仓库根目录

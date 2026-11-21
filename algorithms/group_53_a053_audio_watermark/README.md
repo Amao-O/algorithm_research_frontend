@@ -122,7 +122,7 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python run_experiments.py \
 python -m pip install -r requirements.txt -r requirements-mpi.txt
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 mpirun -np 4 \
   python -m src.mpi_watermark path/to/source.wav \
-  --calibration-margin 0.025 --output-wav /tmp/a053-mpi-4.wav
+  --calibration-margin 0.20 --output-wav /tmp/a053-mpi-4.wav
 ```
 
 所有进程共用同一水印序列，主进程先生成完整 Henon 掩码，再分发连续帧和对应比特。各进程使用与串行实现相同的帧处理函数。计时包含 MPI 分发和收集，WAV 读写在计时区间外。程序输出嵌入与提取耗时、无攻击 BER 和输出 WAV 的 SHA-256。比较不同进程数前，先核对哈希和误码结果一致。省略 `--calibration-margin` 可测默认嵌入。
@@ -135,7 +135,21 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 mpirun -np 4 \
 | 2 | 20.32 s | 5.06 s | 1.81× | 1.82× |
 | 4 | 10.69 s | 2.74 s | 3.45× | 3.37× |
 
-三次运行都恢复了 5,444 位，输出 WAV 也与串行校准版本逐字节一致。华为云的 8、16 进程及重复计时仍待测量。
+三次运行都恢复了 5,444 位，输出 WAV 也与串行校准版本逐字节一致。
+
+#### 华为云 ECS 重复计时
+
+在同一台 4 vCPU 的华为云 ECS（Ubuntu 24.04.4 LTS、Python 3.12.3、mpi4py 4.1.1）使用 *Anticipating Gold* 的 0–60 秒片段。输入为 44.1 kHz 单声道 PCM16 WAV，校准余量取 0.20。Open MPI 使用 `--use-hwthread-cpus --map-by hwthread --bind-to hwthread` 将进程映射并绑定到逻辑 CPU。OpenBLAS 和 OpenMP 均限制为单线程。三轮顺序分别为 1→2→4、2→4→1 和 4→1→2。
+
+耗时取各进程数三次运行的中位数。加速比为同一 ECS 上的 1 进程中位耗时除以对应进程数的中位耗时。ETIR 为相对于该基线的耗时减少百分比。
+
+| MPI 进程数 | 嵌入中位耗时 | 嵌入加速比 | 嵌入 ETIR | 提取中位耗时 | 提取加速比 | 提取 ETIR |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 54.38 s | 1.00× | 0.00% | 14.27 s | 1.00× | 0.00% |
+| 2 | 27.43 s | 1.98× | 49.55% | 7.29 s | 1.96× | 48.90% |
+| 4 | 14.15 s | 3.84× | 73.98% | 3.79 s | 3.77× | 73.47% |
+
+9 次运行的无攻击 BER 均为 0%，每次提取 5,444 位，输出 WAV 的 SHA-256 一致。华为云 8、16 进程仍待测量。
 
 ## 平台接入
 
