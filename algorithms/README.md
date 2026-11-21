@@ -1,4 +1,4 @@
-# 第 53 组 · A053 音频数字水印复现
+# 第 53 组 · DTCWT–FrCT 音频水印复现（A053）
 
 复现目标是实现论文 *An efficient watermarking algorithm for digital audio data in security applications*（Scientific Reports，2023）中的水印嵌入、盲提取和 MPI 并行处理。论文 DOI 为 [10.1038/s41598-023-45619-w](https://doi.org/10.1038/s41598-023-45619-w)。
 
@@ -153,4 +153,4 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 mpirun -np 4 \
 
 ## 平台接入
 
-方法已登记到平台目录。算法服务接收 `POST /process`，配置指向 `http://127.0.0.1:8000/process`。启动命令、素材限制、结果保留时间和样例出处见[根目录 README](../../README.md#本机运行)。请求和结果格式见[算法接入规范](../../docs/算法接入规范.md)。
+方法已登记到平台目录。算法服务接收 `POST /process`，配置指向 `http://127.0.0.1:8000/process`。启动命令、素材限制、结果保留时间和样例出处见[根目录 README](../README.md#本机运行)。请求和结果格式见[算法接入规范](../docs/算法接入规范.md)。

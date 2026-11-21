@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
   "id": "group_53_a053_audio_watermark",
-  "title": "A053 音频数字水印",
-  "english": "A053 Digital Audio Watermarking",
+  "title": "DTCWT–FrCT 音频水印（A053）",
+  "english": "DTCWT–FrCT Audio Watermarking",
   "category": "内容水印",
-  "summary": "在 WAV 中嵌入短文本水印，或从带水印音频中盲提取比特。",
+  "summary": "用双树复小波变换和分数阶 Charlier 变换在 WAV 中嵌入水印，并从带水印音频中盲提取比特。",
   "description": "第 53 组独立复现 Yamni 等人在 Scientific Reports (2023) 发表的方法。采用五层 DTCWT、FrCT、能量量化和 modified Henon 掩码，演示使用固定参数及重建后校准。无攻击 PCM16 闭环已在测试样本上验证，MP3 重编码和移位后的误码仍较高。请先在本机启动算法服务。结果可下载一小时，也会随服务重启清除。",
   "team": "第 53 组",
   "version": "1.0.0",

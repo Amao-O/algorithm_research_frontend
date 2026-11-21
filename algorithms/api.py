@@ -45,7 +45,7 @@ async def lifespan(app):
         yield
 
 
-app = FastAPI(title="A053 音频水印", lifespan=lifespan)
+app = FastAPI(title="DTCWT–FrCT 音频水印（A053）", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
