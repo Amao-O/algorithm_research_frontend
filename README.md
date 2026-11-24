@@ -8,7 +8,31 @@
 
 ## 本机运行
 
-使用 Python 3.12、Node.js 24 和 pnpm。演示服务在 CPU 上处理音频。先在一个终端启动后端：
+使用 Python 3.12、Node.js 24 和 pnpm 11.25.0。演示服务在 CPU 上处理音频。按操作系统选择命令，从仓库根目录开始。
+
+### Windows（命令提示符 CMD）
+
+先用 `py -3.12 --version` 检查 Python 3.12。如果系统只提供 `python` 命令，且 `python --version` 显示 3.12，可以在创建虚拟环境那一行用 `python` 代替 `py -3.12`。从仓库根目录启动后端：
+
+```cmd
+cd algorithms
+py -3.12 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-api.txt
+set "OPENBLAS_NUM_THREADS=1"
+.venv\Scripts\python.exe -m uvicorn api:app --host 127.0.0.1 --port 8000
+```
+
+保留后端窗口，另开一个 CMD，在仓库根目录启动前端。如果 `pnpm` 已安装，可跳过第一行。
+
+```cmd
+npm.cmd install -g pnpm@11.25.0
+pnpm.cmd install --frozen-lockfile --ignore-scripts
+npm.cmd run dev -- --port 5173 --strictPort
+```
+
+### Linux（包括华为云 ECS）
+
+从仓库根目录启动后端：
 
 ```bash
 cd algorithms
@@ -17,12 +41,14 @@ python3.12 -m venv .venv
 OPENBLAS_NUM_THREADS=1 .venv/bin/python -m uvicorn api:app --host 127.0.0.1 --port 8000
 ```
 
-另开终端，在仓库根目录启动前端：
+保留后端窗口，另开终端，在仓库根目录启动前端：
 
 ```bash
 pnpm install --frozen-lockfile --ignore-scripts
 npm run dev -- --port 5173 --strictPort
 ```
+
+### 浏览器验证
 
 打开 `http://127.0.0.1:5173/#/methods/group_53_a053_audio_watermark`。选择「用样例试一试」，使用默认的 `A053` 文字开始处理。下载生成的 WAV 后，切换到「盲提取水印」并上传该 WAV，位数填 `32`。下载 JSON 报告可查看恢复的文字和比特。
 
